@@ -1,7 +1,7 @@
 [package]
 name = "di-api"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 serde = "1.0.188"
@@ -11,3 +11,7 @@ tokio = {version = "1.32.0", features = ["full"]}
 [dependencies.mongodb]
 version = "2.8.0"
 features = ["tokio-runtime"]
+
+[dev-dependencies]
+rustfmt = "0.10.0"
+clippy = "0.0.302"
