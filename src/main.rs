@@ -1,7 +1,7 @@
 use warp::Filter;
 
-mod models;
 mod handlers;
+mod models;
 
 #[tokio::main]
 async fn main() {
@@ -41,7 +41,5 @@ async fn main() {
 
     let routes = add_items.or(get_items).or(delete_item).or(update_item);
 
-    warp::serve(routes)
-        .run(([127, 0, 0, 1], 3030))
-        .await;
+    warp::serve(routes).run(([127, 0, 0, 1], 8080)).await;
 }

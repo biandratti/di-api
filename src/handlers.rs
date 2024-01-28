@@ -1,6 +1,6 @@
+use crate::models::{Id, Item, Store};
 use std::collections::HashMap;
 use warp::{http, Rejection, Reply};
-use crate::models::{Item, Id, Store};
 
 pub async fn update_grocery_list(item: Item, store: Store) -> Result<impl Reply, Rejection> {
     store.grocery_list.write().insert(item.name, item.quantity);
