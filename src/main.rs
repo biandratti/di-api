@@ -2,8 +2,6 @@ use std::error::Error;
 
 use warp::Filter;
 
-use crate::domain::use_cases::FingerprintUseCase;
-
 mod domain;
 mod handlers;
 mod infrastructure;

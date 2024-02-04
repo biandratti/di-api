@@ -1,9 +1,9 @@
 use std::error::Error;
 
 use bson::{DateTime, Uuid};
-use mongodb::{Client, Collection};
+use mongodb::{Client, Collection, Database};
 
-use crate::domain::use_cases::FingerprintUseCase;
+use crate::domain::repositories::FingerprintRepository;
 
 use super::super::domain::entities::Fingerprint;
 
@@ -15,15 +15,15 @@ pub struct MongoFingerprintRepository {
     collection: Collection<Fingerprint>,
 }
 
-impl FingerprintUseCase for MongoFingerprintRepository {
-    type ConcreteType = MongoFingerprintRepository;
-
-    async fn new(db_url: &str) -> Result<Box<Self::ConcreteType>, Box<dyn Error + Send + Sync>> {
-        let client: Client = Client::with_uri_str(db_url).await?;
-        let collection: Collection<Fingerprint> = client.database(DB_NAME).collection(COLL_NAME);
-        Ok(Box::new(Self { collection }))
+impl MongoFingerprintRepository {
+    pub async fn new(db_url: &str) -> Result<Self, Box<dyn Error + Send + Sync>> {
+        let client = Client::with_uri_str(db_url).await?;
+        let db: Database = client.database(DB_NAME);
+        let collection: Collection<Fingerprint> = db.collection(COLL_NAME);
+        Ok(Self { collection })
     }
-
+}
+impl FingerprintRepository for MongoFingerprintRepository {
     async fn insert(
         &self,
         fingerprint: &mut Fingerprint,
