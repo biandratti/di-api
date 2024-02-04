@@ -1,11 +1,13 @@
 use std::error::Error;
+
 use warp::Filter;
+
 use crate::domain::use_cases::FingerprintUseCase;
 
-mod handlers;
-mod models;
 mod domain;
+mod handlers;
 mod infrastructure;
+mod models;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
@@ -45,7 +47,8 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 
     let routes = add_items.or(get_items).or(delete_item).or(update_item);
 
-    let repo = infrastructure::mongo::MongoFingerprintRepository::new("mongodb://localhost:27017").await?;
+    let _repo =
+        infrastructure::mongo::MongoFingerprintRepository::new("mongodb://localhost:27017").await?;
     warp::serve(routes).run(([127, 0, 0, 1], 8080)).await;
     Ok(())
 }
