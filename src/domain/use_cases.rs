@@ -1,14 +1,27 @@
+use crate::domain::entities::Fingerprint;
+use crate::domain::repositories::FingerprintRepository;
+use crate::infrastructure::mongo::MongoFingerprintRepository;
 use std::error::Error;
 
-use super::entities::Fingerprint;
-
-pub trait FingerprintUseCase {
-    type ConcreteType: FingerprintUseCase;
-
-    async fn new(db_url: &str) -> Result<Box<Self::ConcreteType>, Box<dyn Error + Send + Sync>>;
+pub trait FingerprintUseCase: Send + Sync + 'static {
     async fn create_fingerprint(
         &self,
         fingerprint: &mut Fingerprint,
     ) -> Result<(), Box<dyn Error + Send + Sync>>;
-    async fn get_all_fingerprints(&self) -> Result<(), Box<dyn Error + Send + Sync>>;
+}
+
+impl FingerprintUseCase for MongoFingerprintRepository {
+    async fn create_fingerprint(
+        &self,
+        fingerprint: &mut Fingerprint,
+    ) -> Result<(), Box<dyn Error + Send + Sync>> {
+        //fingerprint.created = Some(bson::DateTime::now());
+
+        // Generate UUID for fingerprint
+        fingerprint.id = bson::Uuid::new();
+        fingerprint.ip = Some("maxi_ip".parse().unwrap());
+
+        // Call the insert method of the repository
+        self.insert(fingerprint).await
+    }
 }

@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use bson::{DateTime, Uuid};
+use bson::DateTime;
 use mongodb::{Client, Collection, Database};
 
 use crate::domain::repositories::FingerprintRepository;
@@ -29,13 +29,13 @@ impl FingerprintRepository for MongoFingerprintRepository {
         fingerprint: &mut Fingerprint,
     ) -> Result<(), Box<dyn Error + Send + Sync>> {
         fingerprint.created = Some(DateTime::now());
-        fingerprint.id = Uuid::new();
+        //fingerprint.id = Uuid::new();
         self.collection.insert_one(fingerprint, None).await?;
         Ok(())
     }
 
-    async fn get_all(&self) -> Result<(), Box<dyn Error + Send + Sync>> {
-        // Your implementation for get_all method
-        Ok(())
-    }
+    /*async fn get_all(&self) -> Result<Vec<Fingerprint>, Box<dyn Error + Send + Sync>> {
+        self.collection.find(None, None).await?;
+        Ok(Vec::new())
+    }*/
 }

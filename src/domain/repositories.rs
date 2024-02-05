@@ -7,5 +7,5 @@ pub trait FingerprintRepository {
         &self,
         fingerprint: &mut Fingerprint,
     ) -> Result<(), Box<dyn Error + Send + Sync>>;
-    async fn get_all(&self) -> Result<(), Box<dyn Error + Send + Sync>>;
+    //async fn get_all(&self) -> Result<Vec<Fingerprint>, Box<dyn Error + Send + Sync>>;
 }
