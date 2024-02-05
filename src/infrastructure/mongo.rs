@@ -1,8 +1,8 @@
-use std::error::Error;
-
 use bson::DateTime;
+use futures_util::stream::StreamExt;
 use log::info;
 use mongodb::{Client, Collection, Database};
+use std::error::Error;
 
 use crate::domain::repositories::FingerprintRepository;
 
@@ -31,13 +31,17 @@ impl FingerprintRepository for MongoFingerprintRepository {
         fingerprint: &mut Fingerprint,
     ) -> Result<(), Box<dyn Error + Send + Sync>> {
         fingerprint.created = Some(DateTime::now());
-        //fingerprint.id = Uuid::new();
         self.collection.insert_one(fingerprint, None).await?;
         Ok(())
     }
 
-    /*async fn get_all(&self) -> Result<Vec<Fingerprint>, Box<dyn Error + Send + Sync>> {
-        self.collection.find(None, None).await?;
-        Ok(Vec::new())
-    }*/
+    async fn get_all(&self) -> Result<Vec<Fingerprint>, Box<dyn Error + Send + Sync>> {
+        let mut fingerprints = Vec::new();
+        let mut cursor = self.collection.find(None, None).await?;
+        while let Some(doc) = cursor.next().await {
+            fingerprints.push(doc?);
+        }
+
+        Ok(fingerprints)
+    }
 }
