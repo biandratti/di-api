@@ -4,6 +4,8 @@ mod presentation;
 
 #[tokio::main]
 async fn main() {
+    log4rs::init_file("log4rs.yaml", Default::default()).unwrap();
+
     let repo: infrastructure::mongo::MongoFingerprintRepository =
         infrastructure::mongo::MongoFingerprintRepository::new("mongodb://localhost:27017")
             .await

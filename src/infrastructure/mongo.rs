@@ -1,6 +1,7 @@
 use std::error::Error;
 
 use bson::DateTime;
+use log::info;
 use mongodb::{Client, Collection, Database};
 
 use crate::domain::repositories::FingerprintRepository;
@@ -20,6 +21,7 @@ impl MongoFingerprintRepository {
         let client = Client::with_uri_str(db_url).await?;
         let db: Database = client.database(DB_NAME);
         let collection: Collection<Fingerprint> = db.collection(COLL_NAME);
+        info!("Mongo Connected");
         Ok(Self { collection })
     }
 }

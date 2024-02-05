@@ -11,7 +11,7 @@ The project follows the principles of clean architecture and incorporates best p
 ###### Roadmap for Future Development:
 - [ ] Graceful Shutdown: Implementing a graceful shutdown mechanism to ensure that the service shuts down cleanly without losing data or connections.
 - [ ] Metrics via Prometheus: Integrating Prometheus for collecting and monitoring service metrics to gain insights into performance and resource utilization.
-- [ ] Logging: Implementing comprehensive logging to capture and analyze service events, errors, and operational information.
+- [X] Logging: Implementing comprehensive logging to capture and analyze service events, errors, and operational information.
 - [ ] Traceability: Enhancing traceability by implementing distributed tracing to monitor and debug requests as they traverse through the system.
 - [ ] Security Enhancements: Adding authentication and authorization mechanisms to secure the API endpoints and data access.
 - [ ] Testing: Implementing unit tests, integration tests, and possibly property-based testing to ensure the reliability and correctness of the service.
@@ -19,13 +19,13 @@ The project follows the principles of clean architecture and incorporates best p
 - [ ] Error Handling: Enhancing error handling mechanisms to gracefully handle errors and failures, ensuring robustness and reliability.
 - [ ] Performance Optimization: Identifying and optimizing performance bottlenecks to improve service scalability and responsiveness.
 
-### Usage
+### Usage:
 To run the example service, follow these steps:
 
-Install Rust and Cargo if you haven't already.
-Setup the mongo locally:```docker run --name my-mongo-container -d -p 27017:27017 mongo```
-Navigate to the project directory and run:```cargo run```.
-Access the API endpoints at http://localhost:8080.
+1. Install Rust and Cargo if you haven't already.
+2. Set up mongo locally:```docker run --name my-mongo-container -d -p 27017:27017 mongo```
+3. Navigate to the project directory and run:```cargo run```.
+4. Access the API endpoints at http://localhost:8080.
 
 ###### Contributions
 Contributions and feedback are welcome! Feel free to open issues or pull requests for bug fixes, feature enhancements, or suggestions for improvement.
