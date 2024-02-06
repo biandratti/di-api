@@ -11,12 +11,19 @@ mod presentation;
 async fn main() {
     log4rs::init_file("log4rs.yaml", Default::default()).unwrap();
 
-    let config = Arc::new(Config::from("/api-doc.json"));
+    let config: Arc<Config> = Arc::new(Config::from("/api-doc.json"));
 
-    let repo: infrastructure::mongo::MongoFingerprintRepository =
-        infrastructure::mongo::MongoFingerprintRepository::new("mongodb://localhost:27017")
+    let client: infrastructure::mongo::MongoClient =
+        infrastructure::mongo::MongoClient::new("mongodb://localhost:27017")
             .await
             .unwrap();
+
+    let repo: infrastructure::repository::fingerprint_repository::MongoFingerprintRepository =
+        infrastructure::repository::fingerprint_repository::MongoFingerprintRepository::new(
+            client.client,
+        )
+        .await
+        .unwrap();
 
     let routes = presentation::routes::routes_with_swagger(repo, config);
 
