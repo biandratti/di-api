@@ -1,1 +1,1 @@
-pub mod serve_swagger;
+pub mod swagger;
