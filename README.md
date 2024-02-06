@@ -15,7 +15,7 @@ The project follows the principles of clean architecture and incorporates best p
 - [ ] Traceability: Enhancing traceability by implementing distributed tracing to monitor and debug requests as they traverse through the system.
 - [ ] Security Enhancements: Adding authentication and authorization mechanisms to secure the API endpoints and data access.
 - [ ] Testing: Implementing unit tests, integration tests, and possibly property-based testing to ensure the reliability and correctness of the service.
-- [ ] Documentation: Improving code documentation and providing comprehensive API documentation for better usability and maintainability.
+- [X] Documentation: Improving code documentation and providing comprehensive API documentation for better usability and maintainability.
 - [ ] Error Handling: Enhancing error handling mechanisms to gracefully handle errors and failures, ensuring robustness and reliability.
 - [ ] Performance Optimization: Identifying and optimizing performance bottlenecks to improve service scalability and responsiveness.
 
@@ -25,7 +25,7 @@ To run the example service, follow these steps:
 1. Install Rust and Cargo if you haven't already.
 2. Set up mongo locally:```docker run --name my-mongo-container -d -p 27017:27017 mongo```
 3. Navigate to the project directory and run:```cargo run```.
-4. Access the API endpoints at http://localhost:8080.
+4. Access the Documented API at http://127.0.0.1:8080/swagger-ui/.
 
 ###### Contributions
 Contributions and feedback are welcome! Feel free to open issues or pull requests for bug fixes, feature enhancements, or suggestions for improvement.

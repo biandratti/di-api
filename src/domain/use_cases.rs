@@ -17,13 +17,7 @@ impl FingerprintUseCase for MongoFingerprintRepository {
         &self,
         fingerprint: &mut Fingerprint,
     ) -> Result<(), Box<dyn Error + Send + Sync>> {
-        //fingerprint.created = Some(bson::DateTime::now());
-
-        // Generate UUID for fingerprint
-        fingerprint.id = bson::Uuid::new();
-        fingerprint.ip = Some("maxi_ip".parse().unwrap());
-
-        // Call the insert method of the repository
+        fingerprint.ip = Some("maxi_ip".parse().unwrap()); //WIP...
         self.insert(fingerprint).await
     }
 
