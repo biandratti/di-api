@@ -14,18 +14,12 @@ struct CustomRejection(Box<dyn std::error::Error + Send + Sync>);
 
 impl warp::reject::Reject for CustomRejection {}
 
-fn fingerprint_routes(
-    repo: infrastructure::mongo::MongoFingerprintRepository,
-) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    fingerprint_post(repo.clone()).or(fingerprint_get_all(repo.clone()))
-}
-
 #[utoipa::path(
     post,
     path = "/fingerprint",
     request_body = Fingerprint,
     responses(
-        (status = 200, description = "Create fingerprint", body = [Fingerprint])
+        (status = 201, description = "Create fingerprint", body = [Fingerprint])
     )
 )]
 fn fingerprint_post(
@@ -103,5 +97,7 @@ pub fn routes_with_swagger(
         .and(warp::any().map(move || config.clone()))
         .and_then(serve_swagger);
 
-    api_doc.or(swagger_ui).or(fingerprint_routes(repo))
+    api_doc
+        .or(swagger_ui)
+        .or(fingerprint_post(repo.clone()).or(fingerprint_get_all(repo.clone())))
 }
