@@ -16,6 +16,14 @@ pub fn routes(
     fingerprint_post(repo.clone()).or(fingerprint_get_all(repo.clone()))
 }
 
+#[utoipa::path(
+post,
+path = "/fingerprint",
+request_body = Fingerprint,
+responses(
+(status = 200, description = "Create fingerprint", body = [Fingerprint])
+)
+)]
 fn fingerprint_post(
     repo: infrastructure::mongo::MongoFingerprintRepository,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
@@ -37,6 +45,13 @@ fn fingerprint_post(
         })
 }
 
+#[utoipa::path(
+get,
+path = "/fingerprint",
+responses(
+(status = 200, description = "List fingerprint")
+)
+)]
 fn fingerprint_get_all(
     repo: infrastructure::mongo::MongoFingerprintRepository,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
