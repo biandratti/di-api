@@ -1,3 +1,3 @@
 pub mod entities;
-pub mod repositories;
+pub mod fingerprint_repository;
 pub mod use_cases;

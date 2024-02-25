@@ -23,7 +23,7 @@ impl warp::reject::Reject for CustomRejection {}
     )
 )]
 fn fingerprint_post(
-    repo: infrastructure::mongo::MongoFingerprintRepository,
+    repo: infrastructure::repository::fingerprint_repository::MongoFingerprintRepository,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::post()
         .and(warp::path("fingerprint"))
@@ -51,7 +51,7 @@ fn fingerprint_post(
     )
 )]
 fn fingerprint_get_all(
-    repo: infrastructure::mongo::MongoFingerprintRepository,
+    repo: infrastructure::repository::fingerprint_repository::MongoFingerprintRepository,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::get()
         .and(warp::path("fingerprint"))
@@ -83,7 +83,7 @@ fn fingerprint_get_all(
 struct ApiDoc;
 
 pub fn routes_with_swagger(
-    repo: infrastructure::mongo::MongoFingerprintRepository,
+    repo: infrastructure::repository::fingerprint_repository::MongoFingerprintRepository,
     config: Arc<Config<'static>>,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     let api_doc = warp::path("api-doc.json")
