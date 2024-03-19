@@ -12,6 +12,8 @@ The project follows the principles of clean architecture and incorporates best p
 - [X] Asynchronous Design: Leveraging the Tokio asynchronous runtime for efficient and non-blocking I/O operations.
 - [X] Graceful Shutdown: Implementing a graceful shutdown mechanism to ensure that the service shuts down cleanly
   without losing data or connections.
+- [X] Error Handling: Enhancing error handling mechanisms to gracefully handle errors and failures, ensuring robustness
+  and reliability.
 - [X] MongoDB Integration: Utilizing MongoDB as the backend database to store and retrieve data.
 - [X] Clean Architecture: Following the principles of clean architecture to promote separation of concerns and
   maintainability.
@@ -22,8 +24,6 @@ The project follows the principles of clean architecture and incorporates best p
 
 ###### Roadmap for Future Development:
 
-- [ ] Error Handling: Enhancing error handling mechanisms to gracefully handle errors and failures, ensuring robustness
-  and reliability.
 - [ ] Testing: Implementing unit tests, integration tests, and possibly property-based testing to ensure the reliability
   and correctness of the service.
 - [ ] Metrics via Prometheus: Integrating Prometheus for collecting and monitoring service metrics to gain insights into

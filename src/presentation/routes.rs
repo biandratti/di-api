@@ -1,18 +1,14 @@
-use log::error;
 use std::sync::Arc;
+
 use utoipa::OpenApi;
 use utoipa_swagger_ui::Config;
 use warp::Filter;
 
 use crate::domain::entities::Fingerprint;
 use crate::domain::use_cases::FingerprintUseCase;
+use crate::http_utils::error_handling;
 use crate::http_utils::swagger::serve_swagger;
 use crate::infrastructure;
-
-#[derive(Debug)]
-struct CustomRejection(Box<dyn std::error::Error + Send + Sync>);
-
-impl warp::reject::Reject for CustomRejection {}
 
 #[utoipa::path(
     post,
@@ -34,10 +30,10 @@ fn fingerprint_post(
             async move {
                 match use_case.create_fingerprint(&mut fingerprint).await {
                     Ok(()) => Ok(warp::reply()),
-                    Err(e) => {
-                        error!("Error creating fingerprint: {}", e);
-                        Err(warp::reject::custom(CustomRejection(e)))
-                    }
+                    Err(error) => Err(error_handling::ErrorHandling::application_error(
+                        "create fingerprint",
+                        error,
+                    )),
                 }
             }
         })
@@ -61,10 +57,10 @@ fn fingerprint_get_all(
             async move {
                 match use_case.get_all_fingerprints().await {
                     Ok(fingerprint_list) => Ok(warp::reply::json(&fingerprint_list)),
-                    Err(e) => {
-                        error!("Error getting all fingerprints: {}", e);
-                        Err(warp::reject::custom(CustomRejection(e)))
-                    }
+                    Err(error) => Err(error_handling::ErrorHandling::application_error(
+                        "get all fingerprints",
+                        error,
+                    )),
                 }
             }
         })
