@@ -16,10 +16,7 @@ pub struct MongoFingerprintRepository {
 }
 
 impl MongoFingerprintRepository {
-    pub async fn new(
-        client: Client,
-        db_name: &String,
-    ) -> Result<Self, Box<dyn Error + Send + Sync>> {
+    pub async fn new(client: Client, db_name: &str) -> Result<Self, Box<dyn Error + Send + Sync>> {
         let db: Database = client.database(db_name);
         let collection: Collection<Fingerprint> = db.collection(COLL_NAME);
         info!("Mongo Connected");
