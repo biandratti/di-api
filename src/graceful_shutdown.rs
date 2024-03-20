@@ -23,17 +23,25 @@ pub async fn server_graceful_shutdown(
     let repo: infrastructure::repository::fingerprint_repository::MongoFingerprintRepository =
         infrastructure::repository::fingerprint_repository::MongoFingerprintRepository::new(
             client.client,
+            &dotenv::var("DATABASE_NAME").expect("DATABASE_NAME must be set"),
         )
         .await
         .unwrap();
 
     let routes = presentation::routes::routes_with_swagger(repo, config);
-
-    let (addr, server) =
-        warp::serve(routes).bind_with_graceful_shutdown(([127, 0, 0, 1], 8080), async move {
+    let (addr, server) = warp::serve(routes).bind_with_graceful_shutdown(
+        (
+            [127, 0, 0, 1],
+            dotenv::var("SERVER_PORT")
+                .expect("SERVER_PORT must be set")
+                .parse::<u16>()
+                .unwrap(),
+        ),
+        async move {
             subsys.on_shutdown_requested().await;
             tracing::info!("Starting server shutdown ...");
-        });
+        },
+    );
 
     tracing::info!("Listening on http://{}/swagger-ui/", addr);
 

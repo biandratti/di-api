@@ -8,7 +8,6 @@ use mongodb::{Client, Collection, Database};
 
 use crate::domain::fingerprint_repository::FingerprintRepository;
 
-const DB_NAME: &str = "di";
 const COLL_NAME: &str = "fingerprints";
 
 #[derive(Debug, Clone)]
@@ -17,8 +16,8 @@ pub struct MongoFingerprintRepository {
 }
 
 impl MongoFingerprintRepository {
-    pub async fn new(client: Client) -> Result<Self, Box<dyn Error + Send + Sync>> {
-        let db: Database = client.database(DB_NAME);
+    pub async fn new(client: Client, db_name: &str) -> Result<Self, Box<dyn Error + Send + Sync>> {
+        let db: Database = client.database(db_name);
         let collection: Collection<Fingerprint> = db.collection(COLL_NAME);
         info!("Mongo Connected");
         Ok(Self { collection })
