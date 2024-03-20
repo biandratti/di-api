@@ -1,4 +1,5 @@
-use crate::{infrastructure, presentation};
+use crate::{adapters, infrastructure};
+
 use std::sync::Arc;
 use tokio_graceful_shutdown::SubsystemHandle;
 use utoipa_swagger_ui::Config;
@@ -28,7 +29,7 @@ pub async fn server_graceful_shutdown(
         .await
         .unwrap();
 
-    let routes = presentation::routes::routes_with_swagger(repo, config);
+    let routes = adapters::api::shared::routes::routes_with_swagger(repo, config);
     let (addr, server) = warp::serve(routes).bind_with_graceful_shutdown(
         (
             [127, 0, 0, 1],

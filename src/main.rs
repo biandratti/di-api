@@ -2,6 +2,7 @@ use std::env;
 use tokio::time::Duration;
 use tokio_graceful_shutdown::{SubsystemBuilder, Toplevel};
 
+mod adapters;
 mod domain;
 mod graceful_shutdown;
 mod http_utils;
