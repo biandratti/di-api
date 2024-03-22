@@ -6,7 +6,7 @@ use futures_util::stream::StreamExt;
 use log::info;
 use mongodb::{Client, Collection, Database};
 
-use crate::domain::fingerprint_repository::FingerprintRepository;
+use crate::domain::fingerprint_repository_abstract::FingerprintRepositoryAbstract;
 
 const COLL_NAME: &str = "fingerprints";
 
@@ -23,7 +23,7 @@ impl MongoFingerprintRepository {
         Ok(Self { collection })
     }
 }
-impl FingerprintRepository for MongoFingerprintRepository {
+impl FingerprintRepositoryAbstract for MongoFingerprintRepository {
     async fn insert(
         &self,
         fingerprint: &mut Fingerprint,

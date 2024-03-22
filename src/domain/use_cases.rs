@@ -1,5 +1,5 @@
 use crate::domain::entities::Fingerprint;
-use crate::domain::fingerprint_repository::FingerprintRepository;
+use crate::domain::fingerprint_repository_abstract::FingerprintRepositoryAbstract;
 use crate::infrastructure::repository::fingerprint_repository::MongoFingerprintRepository;
 use std::error::Error;
 

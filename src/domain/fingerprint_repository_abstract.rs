@@ -2,7 +2,7 @@ use std::error::Error;
 
 use crate::domain::entities::Fingerprint;
 
-pub trait FingerprintRepository {
+pub trait FingerprintRepositoryAbstract {
     async fn insert(
         &self,
         fingerprint: &mut Fingerprint,
