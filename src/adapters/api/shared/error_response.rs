@@ -1,8 +1,7 @@
-//use warp::Rejection;
+use warp::Rejection;
 
-//use crate::domain::error::ApiError;
+use crate::domain::error::ApiError;
 
-/*
 pub struct ErrorResponseHandling {}
 
 impl ErrorResponseHandling {
@@ -12,13 +11,13 @@ impl ErrorResponseHandling {
             _ => warp::reject::custom(CustomRejection(e.error)),
         }
     }
-}*/
+}
 
 #[derive(Debug)]
 pub struct CustomRejection(pub Box<dyn std::error::Error + Send + Sync>);
 
 impl warp::reject::Reject for CustomRejection {
-    /*fn get_error_message(&self) -> String {
+    fn get_error_message(&self) -> String {
         format!("{}", self.0)
-    }*/
+    }
 }

@@ -14,12 +14,8 @@ impl fmt::Display for ApiError {
     }
 }
 
-/*impl ApiError {
-    pub fn get_error_message(&self) -> String {
-        String::from(&self.message)
-    }
-
+impl ApiError {
     pub fn get_error_code(&self) -> u16 {
         self.code
     }
-}*/
+}

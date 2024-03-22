@@ -1,7 +1,7 @@
 use warp::Filter;
 
-use crate::adapters;
-use crate::adapters::api::shared::error_response::CustomRejection;
+use crate::adapters::api::shared::error_response::ErrorResponseHandling;
+use crate::adapters::spi::db::fingerprint_repository::MongoFingerprintRepository;
 use crate::domain::entities::Fingerprint;
 use crate::domain::use_cases::FingerprintUseCase;
 
@@ -14,7 +14,7 @@ responses(
 )
 )]
 pub fn fingerprint_post(
-    repo: adapters::spi::db::fingerprint_repository::MongoFingerprintRepository,
+    repo: MongoFingerprintRepository,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::post()
         .and(warp::path("fingerprint"))
@@ -25,7 +25,7 @@ pub fn fingerprint_post(
             async move {
                 match use_case.create_fingerprint(&mut fingerprint).await {
                     Ok(()) => Ok(warp::reply()),
-                    Err(error) => Err(warp::reject::custom(CustomRejection(error))), //Err(ErrorResponseHandling::map_io_error(ApiError())),
+                    Err(error) => Err(ErrorResponseHandling::map_io_error(error)),
                 }
             }
         })
@@ -39,7 +39,7 @@ responses(
 )
 )]
 pub fn fingerprint_get_all(
-    repo: adapters::spi::db::fingerprint_repository::MongoFingerprintRepository,
+    repo: MongoFingerprintRepository,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::get()
         .and(warp::path("fingerprint"))
@@ -49,7 +49,7 @@ pub fn fingerprint_get_all(
             async move {
                 match use_case.get_all_fingerprints().await {
                     Ok(fingerprint_list) => Ok(warp::reply::json(&fingerprint_list)),
-                    Err(error) => Err(warp::reject::custom(CustomRejection(error))), //Err(ErrorResponseHandling::map_io_error(ApiError())),,
+                    Err(error) => Err(ErrorResponseHandling::map_io_error(error)),
                 }
             }
         })
