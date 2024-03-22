@@ -1,4 +1,21 @@
-#[derive(Debug)]
-pub struct CustomRejection(pub Box<dyn std::error::Error + Send + Sync>);
+use std::{error::Error, fmt};
 
-impl warp::reject::Reject for CustomRejection {}
+#[derive(Debug)]
+pub struct ApiError {
+    pub code: u16,
+    pub message: String,
+    pub error: Box<dyn Error + Send + Sync>,
+}
+
+// Implement std::fmt::Display for AppError
+impl fmt::Display for ApiError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "An Error Occurred, Please Try Again!") // user-facing output
+    }
+}
+
+impl ApiError {
+    pub fn get_error_code(&self) -> u16 {
+        self.code
+    }
+}
