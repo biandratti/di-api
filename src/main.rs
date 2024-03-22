@@ -6,8 +6,6 @@ use tokio_graceful_shutdown::{SubsystemBuilder, Toplevel};
 mod adapters;
 mod application;
 mod domain;
-mod graceful_shutdown;
-mod http_utils;
 mod infrastructure;
 
 #[tokio::main]
@@ -33,13 +31,14 @@ async fn main() {
     // Setup and execute subsystem tree
     let _ = Toplevel::new(|s| async move {
         s.start(SubsystemBuilder::new("Mongo", move |subsys| async move {
-            graceful_shutdown::mongo_graceful_shutdown(subsys, client_clone_mongo).await
+            infrastructure::graceful_shutdown::mongo_graceful_shutdown(subsys, client_clone_mongo)
+                .await
         }));
 
         s.start(SubsystemBuilder::new(
             "Warp Server",
             move |subsys| async move {
-                graceful_shutdown::server_graceful_shutdown(subsys, client).await
+                infrastructure::graceful_shutdown::server_graceful_shutdown(subsys, client).await
             },
         ));
     })

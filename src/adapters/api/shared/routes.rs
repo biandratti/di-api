@@ -7,7 +7,7 @@ use warp::Filter;
 use crate::adapters;
 use crate::adapters::api::fingerprint::fingerprint_controllers;
 use crate::domain::entities::Fingerprint;
-use crate::http_utils::swagger::serve_swagger;
+use crate::infrastructure::swagger::serve_swagger;
 
 #[derive(OpenApi)]
 #[openapi(

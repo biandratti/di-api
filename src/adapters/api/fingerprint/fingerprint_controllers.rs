@@ -2,8 +2,8 @@ use warp::Filter;
 
 use crate::adapters::api::shared::error_response::ErrorResponseHandling;
 use crate::adapters::spi::db::fingerprint_repository::MongoFingerprintRepository;
+use crate::application::usecases::fingerprint_usecases::FingerprintUseCase;
 use crate::domain::entities::Fingerprint;
-use crate::domain::use_cases::FingerprintUseCase;
 
 #[utoipa::path(
 post,
