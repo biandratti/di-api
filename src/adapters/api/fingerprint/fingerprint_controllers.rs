@@ -1,9 +1,9 @@
 use warp::Filter;
 
 use crate::adapters;
+use crate::adapters::api::shared::error_response::CustomRejection;
 use crate::domain::entities::Fingerprint;
 use crate::domain::use_cases::FingerprintUseCase;
-use crate::http_utils::error_handling;
 
 #[utoipa::path(
 post,
@@ -25,10 +25,7 @@ pub fn fingerprint_post(
             async move {
                 match use_case.create_fingerprint(&mut fingerprint).await {
                     Ok(()) => Ok(warp::reply()),
-                    Err(error) => Err(error_handling::ErrorHandling::application_error(
-                        "create fingerprint",
-                        error,
-                    )),
+                    Err(error) => Err(warp::reject::custom(CustomRejection(error)))//Err(ErrorResponseHandling::map_io_error(ApiError())),
                 }
             }
         })
@@ -52,10 +49,7 @@ pub fn fingerprint_get_all(
             async move {
                 match use_case.get_all_fingerprints().await {
                     Ok(fingerprint_list) => Ok(warp::reply::json(&fingerprint_list)),
-                    Err(error) => Err(error_handling::ErrorHandling::application_error(
-                        "get all fingerprints",
-                        error,
-                    )),
+                    Err(error) => Err(warp::reject::custom(CustomRejection(error))),//Err(ErrorResponseHandling::map_io_error(ApiError())),,
                 }
             }
         })
