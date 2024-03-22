@@ -4,10 +4,10 @@ use utoipa::OpenApi;
 use utoipa_swagger_ui::Config;
 use warp::Filter;
 
+use crate::adapters;
 use crate::adapters::api::fingerprint::fingerprint_controllers;
 use crate::domain::entities::Fingerprint;
 use crate::http_utils::swagger::serve_swagger;
-use crate::infrastructure;
 
 #[derive(OpenApi)]
 #[openapi(
@@ -22,7 +22,7 @@ tags(
 struct ApiDoc;
 
 pub fn routes_with_swagger(
-    repo: infrastructure::repository::fingerprint_repository::MongoFingerprintRepository,
+    repo: adapters::spi::db::fingerprint_repository::MongoFingerprintRepository,
     config: Arc<Config<'static>>,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     let api_doc = warp::path("api-doc.json")

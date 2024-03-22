@@ -1,9 +1,9 @@
 use warp::Filter;
 
+use crate::adapters;
 use crate::domain::entities::Fingerprint;
 use crate::domain::use_cases::FingerprintUseCase;
 use crate::http_utils::error_handling;
-use crate::infrastructure;
 
 #[utoipa::path(
 post,
@@ -14,7 +14,7 @@ responses(
 )
 )]
 pub fn fingerprint_post(
-    repo: infrastructure::repository::fingerprint_repository::MongoFingerprintRepository,
+    repo: adapters::spi::db::fingerprint_repository::MongoFingerprintRepository,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::post()
         .and(warp::path("fingerprint"))
@@ -42,7 +42,7 @@ responses(
 )
 )]
 pub fn fingerprint_get_all(
-    repo: infrastructure::repository::fingerprint_repository::MongoFingerprintRepository,
+    repo: adapters::spi::db::fingerprint_repository::MongoFingerprintRepository,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::get()
         .and(warp::path("fingerprint"))

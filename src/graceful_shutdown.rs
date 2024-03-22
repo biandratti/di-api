@@ -21,8 +21,8 @@ pub async fn server_graceful_shutdown(
 ) -> miette::Result<()> {
     let config: Arc<Config> = Arc::new(Config::from("/api-doc.json"));
 
-    let repo: infrastructure::repository::fingerprint_repository::MongoFingerprintRepository =
-        infrastructure::repository::fingerprint_repository::MongoFingerprintRepository::new(
+    let repo: adapters::spi::db::fingerprint_repository::MongoFingerprintRepository =
+        adapters::spi::db::fingerprint_repository::MongoFingerprintRepository::new(
             client.client,
             &dotenv::var("DATABASE_NAME").expect("DATABASE_NAME must be set"),
         )
