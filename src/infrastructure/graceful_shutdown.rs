@@ -1,8 +1,10 @@
-use crate::{adapters, infrastructure};
-
+use std::net::SocketAddrV4;
 use std::sync::Arc;
+
 use tokio_graceful_shutdown::SubsystemHandle;
 use utoipa_swagger_ui::Config;
+
+use crate::{adapters, infrastructure};
 
 pub async fn mongo_graceful_shutdown(
     subsys: SubsystemHandle,
@@ -18,6 +20,7 @@ pub async fn mongo_graceful_shutdown(
 pub async fn server_graceful_shutdown(
     subsys: SubsystemHandle,
     client: infrastructure::mongo::MongoClient,
+    socket_addr: SocketAddrV4,
 ) -> miette::Result<()> {
     let config: Arc<Config> = Arc::new(Config::from("/api-doc.json"));
 
@@ -30,19 +33,10 @@ pub async fn server_graceful_shutdown(
         .unwrap();
 
     let routes = adapters::api::shared::routes::routes_with_swagger(repo, config);
-    let (addr, server) = warp::serve(routes).bind_with_graceful_shutdown(
-        (
-            [127, 0, 0, 1],
-            dotenv::var("SERVER_PORT")
-                .expect("SERVER_PORT must be set")
-                .parse::<u16>()
-                .unwrap(),
-        ),
-        async move {
-            subsys.on_shutdown_requested().await;
-            tracing::info!("Starting server shutdown ...");
-        },
-    );
+    let (addr, server) = warp::serve(routes).bind_with_graceful_shutdown(socket_addr, async move {
+        subsys.on_shutdown_requested().await;
+        tracing::info!("Starting server shutdown ...");
+    });
 
     tracing::info!("Listening on http://{}/swagger-ui/", addr);
 

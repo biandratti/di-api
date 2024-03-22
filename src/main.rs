@@ -1,12 +1,7 @@
 use std::env;
+use std::net::{Ipv4Addr, SocketAddrV4};
 
-use tokio::time::Duration;
-use tokio_graceful_shutdown::{SubsystemBuilder, Toplevel};
-
-mod adapters;
-mod application;
-mod domain;
-mod infrastructure;
+use fingerprint_api::run;
 
 #[tokio::main]
 async fn main() {
@@ -18,31 +13,12 @@ async fn main() {
     }
     dotenv::from_filename(environment_file).ok();
 
-    tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::INFO)
-        .init();
-    let client: infrastructure::mongo::MongoClient = infrastructure::mongo::MongoClient::new(
-        &(dotenv::var("DATABASE_URL").expect("DATABASE_URL must be set")),
-    )
-    .await
-    .unwrap();
+    let server_port = dotenv::var("SERVER_PORT")
+        .expect("SERVER_PORT must be set")
+        .parse::<u16>()
+        .unwrap();
+    let socket_addr = SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), server_port);
+    let database_url = dotenv::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
-    let client_clone_mongo = client.clone();
-    // Setup and execute subsystem tree
-    let _ = Toplevel::new(|s| async move {
-        s.start(SubsystemBuilder::new("Mongo", move |subsys| async move {
-            infrastructure::graceful_shutdown::mongo_graceful_shutdown(subsys, client_clone_mongo)
-                .await
-        }));
-
-        s.start(SubsystemBuilder::new(
-            "Warp Server",
-            move |subsys| async move {
-                infrastructure::graceful_shutdown::server_graceful_shutdown(subsys, client).await
-            },
-        ));
-    })
-    .catch_signals()
-    .handle_shutdown_requests(Duration::from_secs(2))
-    .await;
+    run(socket_addr, &database_url).await;
 }
