@@ -6,14 +6,15 @@ use warp::Filter;
 
 use crate::adapters;
 use crate::adapters::api::fingerprint::fingerprint_controllers;
-use crate::domain::entities::Fingerprint;
+use crate::adapters::api::fingerprint::fingerprint_payload::FingerprintPayload;
+use crate::adapters::api::fingerprint::fingerprint_presenters::FingerprintPresenter;
 use crate::infrastructure::swagger::serve_swagger;
 
 #[derive(OpenApi)]
 #[openapi(
 paths(fingerprint_controllers::fingerprint_post, fingerprint_controllers::fingerprint_get_all),
 components(
-schemas(Fingerprint)
+schemas(FingerprintPresenter, FingerprintPayload)
 ),
 tags(
 (name = "fingerprint", description = "Fingerprint items management API")

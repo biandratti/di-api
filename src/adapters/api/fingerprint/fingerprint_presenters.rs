@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
 #[derive(Debug, Deserialize, Serialize, ToSchema, Clone)]
-pub struct Fingerprint {
+pub struct FingerprintPresenter {
     #[schema(value_type = String)]
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
     pub id: Option<ObjectId>,
