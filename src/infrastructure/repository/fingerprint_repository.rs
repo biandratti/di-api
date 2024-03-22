@@ -6,7 +6,7 @@ use futures_util::stream::StreamExt;
 use log::info;
 use mongodb::{Client, Collection, Database};
 
-use crate::domain::fingerprint_repository_abstract::FingerprintRepositoryAbstract;
+use crate::application::repositories::fingerprint_repository_abstract::FingerprintRepositoryAbstract;
 
 const COLL_NAME: &str = "fingerprints";
 

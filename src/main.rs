@@ -4,6 +4,7 @@ use tokio_graceful_shutdown::{SubsystemBuilder, Toplevel};
 
 mod adapters;
 mod domain;
+mod application;
 mod graceful_shutdown;
 mod http_utils;
 mod infrastructure;
