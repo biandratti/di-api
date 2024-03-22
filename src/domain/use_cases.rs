@@ -1,7 +1,8 @@
-use crate::domain::entities::Fingerprint;
-use crate::application::repositories::fingerprint_repository_abstract::FingerprintRepositoryAbstract;
-use crate::adapters::spi::db::fingerprint_repository::MongoFingerprintRepository;
 use std::error::Error;
+
+use crate::adapters::spi::db::fingerprint_repository::MongoFingerprintRepository;
+use crate::application::repositories::fingerprint_repository_abstract::FingerprintRepositoryAbstract;
+use crate::domain::entities::Fingerprint;
 
 pub trait FingerprintUseCase: Send + Sync + 'static {
     async fn create_fingerprint(
