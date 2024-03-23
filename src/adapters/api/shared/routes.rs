@@ -39,6 +39,5 @@ pub fn routes_with_swagger(
 
     api_doc
         .or(swagger_ui)
-        .or(fingerprint_controllers::fingerprint_post(repo.clone())
-            .or(fingerprint_controllers::fingerprint_get_all(repo.clone())))
+        .or(fingerprint_controllers::build(repo))
 }

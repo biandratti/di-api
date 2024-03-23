@@ -10,9 +10,9 @@ pub async fn run(socket_addr: SocketAddrV4, db_url: &str) {
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::INFO)
         .init();
-    let client: MongoClient = MongoClient::new(db_url).await.unwrap();
+    let mongo_client: MongoClient = MongoClient::new(db_url).await.unwrap();
 
-    let client_clone_mongo = client.clone();
+    let client_clone_mongo = mongo_client.clone();
     // Setup and execute subsystem tree
     let _ = Toplevel::new(move |s| async move {
         s.start(SubsystemBuilder::new("Mongo", move |subsys| async move {
@@ -22,7 +22,7 @@ pub async fn run(socket_addr: SocketAddrV4, db_url: &str) {
         s.start(SubsystemBuilder::new(
             "Warp Server",
             move |subsys| async move {
-                graceful_shutdown::server_graceful_shutdown(subsys, client, socket_addr).await
+                graceful_shutdown::server_graceful_shutdown(subsys, mongo_client, socket_addr).await
             },
         ));
     })
