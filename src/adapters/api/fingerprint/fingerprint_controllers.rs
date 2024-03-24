@@ -1,3 +1,4 @@
+use warp::http::StatusCode;
 use warp::Filter;
 
 use crate::adapters::api::fingerprint::fingerprint_mapper::FingerprintMapper;
@@ -36,7 +37,7 @@ fn fingerprint_post(
                     .create_fingerprint(&mut (FingerprintMapper::to_entity(fingerprint)))
                     .await
                 {
-                    Ok(()) => Ok(warp::reply()),
+                    Ok(()) => Ok(StatusCode::CREATED),
                     Err(error) => Err(ErrorResponseHandling::map_io_error(error)),
                 }
             }
