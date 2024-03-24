@@ -42,11 +42,12 @@ async fn it_get_fingerprints() {
         .reply(&api)
         .await;
 
-    let body_bytes = get_resp.into_body();
+    let status = get_resp.status();
+    let body_bytes = get_resp.into_body().clone();
 
     let fingerprints: Vec<FingerprintPresenter> = from_slice(&body_bytes).unwrap();
 
-    //assert_eq!(get_resp.status(), StatusCode::OK);
+    assert_eq!(status, StatusCode::OK);
     assert_eq!(fingerprints.len(), 1);
     assert_eq!(fingerprints[0].trace_id, "my_trace_id");
 }
