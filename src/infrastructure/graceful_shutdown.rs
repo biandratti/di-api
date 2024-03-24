@@ -19,14 +19,14 @@ pub async fn mongo_graceful_shutdown(
 
 pub async fn server_graceful_shutdown(
     subsys: SubsystemHandle,
-    client: infrastructure::mongo::MongoClient,
+    mongo_client: infrastructure::mongo::MongoClient,
     socket_addr: SocketAddrV4,
 ) -> miette::Result<()> {
     let config: Arc<Config> = Arc::new(Config::from("/api-doc.json"));
 
     let repo: adapters::spi::db::fingerprint_repository::MongoFingerprintRepository =
         adapters::spi::db::fingerprint_repository::MongoFingerprintRepository::new(
-            client.client,
+            mongo_client.client,
             &dotenv::var("DATABASE_NAME").expect("DATABASE_NAME must be set"),
         )
         .await

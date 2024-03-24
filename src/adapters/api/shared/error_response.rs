@@ -1,3 +1,4 @@
+use warp::reject::Reject;
 use warp::Rejection;
 
 use crate::domain::error::ApiError;
@@ -16,4 +17,4 @@ impl ErrorResponseHandling {
 #[derive(Debug)]
 pub struct CustomRejection(pub Box<dyn std::error::Error + Send + Sync>);
 
-impl warp::reject::Reject for CustomRejection {}
+impl Reject for CustomRejection {}

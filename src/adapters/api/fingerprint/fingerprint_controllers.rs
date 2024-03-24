@@ -1,3 +1,4 @@
+use warp::http::StatusCode;
 use warp::Filter;
 
 use crate::adapters::api::fingerprint::fingerprint_mapper::FingerprintMapper;
@@ -8,6 +9,12 @@ use crate::adapters::spi::db::fingerprint_repository::MongoFingerprintRepository
 use crate::application::mappers::api_mapper::ApiMapper;
 use crate::application::usecases::fingerprint_usecases::FingerprintUseCase;
 
+pub fn build(
+    repo: MongoFingerprintRepository,
+) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    fingerprint_post(repo.clone()).or(fingerprint_get_all(repo.clone()))
+}
+
 #[utoipa::path(
 post,
 path = "/fingerprint",
@@ -16,7 +23,7 @@ responses(
 (status = 201, description = "Create fingerprint", body = [FingerprintPayload])
 )
 )]
-pub fn fingerprint_post(
+fn fingerprint_post(
     repo: MongoFingerprintRepository,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::post()
@@ -30,7 +37,7 @@ pub fn fingerprint_post(
                     .create_fingerprint(&mut (FingerprintMapper::to_entity(fingerprint)))
                     .await
                 {
-                    Ok(()) => Ok(warp::reply()),
+                    Ok(()) => Ok(StatusCode::CREATED),
                     Err(error) => Err(ErrorResponseHandling::map_io_error(error)),
                 }
             }
@@ -44,7 +51,7 @@ responses(
 (status = 200, description = "List fingerprint")
 )
 )]
-pub fn fingerprint_get_all(
+fn fingerprint_get_all(
     repo: MongoFingerprintRepository,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::get()
