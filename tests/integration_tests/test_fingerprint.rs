@@ -65,7 +65,7 @@ async fn setup_environment() -> (GenericImage, String, u16) {
 
     let msg = WaitFor::message_on_stdout("server is ready");
     let exposed_port: u16 = 27017;
-    let mongo_image: GenericImage = GenericImage::new("mongo", "6.0.7")
+    let mongo_image: GenericImage = GenericImage::new("mongo", "7.0.7")
         .with_wait_for(msg.clone())
         .with_env_var("MONGO_INITDB_DATABASE", &db_name)
         .with_env_var("MONGO_INITDB_ROOT_USERNAME", "root")

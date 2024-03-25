@@ -21,6 +21,8 @@ The project follows the principles of clean architecture and incorporates best p
   information.
 - [X] Documentation: Improving code documentation and providing comprehensive API documentation for better usability and
   maintainability.
+- [X] Testing: Implementing unit tests, integration tests, and possibly property-based testing to ensure the reliability
+  and correctness of the service.
 
 ###### Roadmap for Future Development:
 
