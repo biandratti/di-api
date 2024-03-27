@@ -23,11 +23,11 @@ The project follows the principles of clean architecture and incorporates best p
   maintainability.
 - [X] Testing: Implementing unit tests, integration tests, and possibly property-based testing to ensure the reliability
   and correctness of the service.
+- [X] Metrics via Prometheus: Integrating Prometheus for collecting and monitoring service metrics to gain insights into
+  performance and resource utilization.
 
 ###### Roadmap for Future Development:
 
-- [ ] Metrics via Prometheus: Integrating Prometheus for collecting and monitoring service metrics to gain insights into
-  performance and resource utilization.
 - [ ] Kafka Integration
 - [ ] Security Enhancements: Adding authentication and authorization mechanisms to secure the API endpoints and data
   access.
@@ -44,6 +44,7 @@ To run the example service via cargo, follow these steps:
 2. Set up mongo locally:```docker run --name my-mongo-container -d -p 27017:27017 mongo```
 3. Navigate to the project directory and run:```cargo run```.
 4. Access the Documented API at http://0.0.0.0:8080/swagger-ui/.
+5. Access to metrics http://0.0.0.0:8080/metrics
 
 To run the example service via docker compose, follow these steps:
 
