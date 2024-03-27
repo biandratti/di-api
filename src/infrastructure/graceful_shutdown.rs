@@ -33,7 +33,7 @@ pub async fn server_graceful_shutdown(subsys: SubsystemHandle, mongo_client: Mon
     let exporter = opentelemetry_prometheus::exporter().with_registry(registry.clone()).build().unwrap();
     let provider = SdkMeterProvider::builder().with_reader(exporter).build();
 
-    let meter = provider.meter("hyper-example");
+    let meter = provider.meter("api-example");
     let state: Arc<AppState> = Arc::new(AppState {
         registry,
         http_counter: meter.u64_counter("http_requests_total").with_description("Total number of HTTP requests made.").init(),
