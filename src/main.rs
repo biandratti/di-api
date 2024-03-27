@@ -13,11 +13,8 @@ async fn main() {
     }
     dotenv::from_filename(environment_file).ok();
 
-    let server_port = dotenv::var("SERVER_PORT")
-        .expect("SERVER_PORT must be set")
-        .parse::<u16>()
-        .unwrap();
-    let socket_addr = SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), server_port);
+    let server_port = dotenv::var("SERVER_PORT").expect("SERVER_PORT must be set").parse::<u16>().unwrap();
+    let socket_addr = SocketAddrV4::new(Ipv4Addr::new(0, 0, 0, 0), server_port);
     let database_url = dotenv::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
     run(socket_addr, &database_url).await;

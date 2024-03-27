@@ -1,0 +1,18 @@
+version: '3'
+services:
+
+  mongo:
+    image: mongo:7.0.7
+    ports:
+      - "27017:27017"
+
+  app:
+    build: .
+    environment:
+      - DATABASE_NAME=di
+      - DATABASE_URL=mongodb://mongo:27017
+      - SERVER_PORT=8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
