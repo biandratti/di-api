@@ -6,10 +6,7 @@ use utoipa_swagger_ui::Config;
 
 use crate::{adapters, infrastructure};
 
-pub async fn mongo_graceful_shutdown(
-    subsys: SubsystemHandle,
-    client: infrastructure::mongo::MongoClient,
-) -> miette::Result<()> {
+pub async fn mongo_graceful_shutdown(subsys: SubsystemHandle, client: infrastructure::mongo::MongoClient) -> miette::Result<()> {
     subsys.on_shutdown_requested().await;
     tracing::info!("Starting mongo shutdown ...");
     client.client.shutdown().await;
@@ -17,20 +14,13 @@ pub async fn mongo_graceful_shutdown(
     Ok(())
 }
 
-pub async fn server_graceful_shutdown(
-    subsys: SubsystemHandle,
-    mongo_client: infrastructure::mongo::MongoClient,
-    socket_addr: SocketAddrV4,
-) -> miette::Result<()> {
+pub async fn server_graceful_shutdown(subsys: SubsystemHandle, mongo_client: infrastructure::mongo::MongoClient, socket_addr: SocketAddrV4) -> miette::Result<()> {
     let config: Arc<Config> = Arc::new(Config::from("/api-doc.json"));
 
     let repo: adapters::spi::db::fingerprint_repository::MongoFingerprintRepository =
-        adapters::spi::db::fingerprint_repository::MongoFingerprintRepository::new(
-            mongo_client.client,
-            &dotenv::var("DATABASE_NAME").expect("DATABASE_NAME must be set"),
-        )
-        .await
-        .unwrap();
+        adapters::spi::db::fingerprint_repository::MongoFingerprintRepository::new(mongo_client.client, &dotenv::var("DATABASE_NAME").expect("DATABASE_NAME must be set"))
+            .await
+            .unwrap();
 
     let routes = adapters::api::shared::routes::routes_with_swagger(repo, config);
     let (addr, server) = warp::serve(routes).bind_with_graceful_shutdown(socket_addr, async move {

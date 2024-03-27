@@ -20,27 +20,15 @@ async fn it_get_fingerprints() {
     let db_url = format!("mongodb://root:root@localhost:{}", port);
 
     let mongo_client: MongoClient = MongoClient::new(&db_url).await.unwrap();
-    let repo: MongoFingerprintRepository =
-        MongoFingerprintRepository::new(mongo_client.client, &db_name)
-            .await
-            .unwrap();
+    let repo: MongoFingerprintRepository = MongoFingerprintRepository::new(mongo_client.client, &db_name).await.unwrap();
 
     let api = fingerprint_controllers::build(repo);
 
-    let post_resp: Response<Bytes> = request()
-        .method("POST")
-        .path("/fingerprint")
-        .json(&fingerprint_payload())
-        .reply(&api)
-        .await;
+    let post_resp: Response<Bytes> = request().method("POST").path("/fingerprint").json(&fingerprint_payload()).reply(&api).await;
 
     assert_eq!(post_resp.status(), StatusCode::CREATED);
 
-    let get_resp: Response<Bytes> = request()
-        .method("GET")
-        .path("/fingerprint")
-        .reply(&api)
-        .await;
+    let get_resp: Response<Bytes> = request().method("GET").path("/fingerprint").reply(&api).await;
 
     let status = get_resp.status();
     let body_bytes = get_resp.into_body().clone();

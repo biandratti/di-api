@@ -26,9 +26,7 @@ pub fn routes_with_swagger(
     repo: adapters::spi::db::fingerprint_repository::MongoFingerprintRepository,
     config: Arc<Config<'static>>,
 ) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    let api_doc = warp::path("api-doc.json")
-        .and(warp::get())
-        .map(|| warp::reply::json(&ApiDoc::openapi()));
+    let api_doc = warp::path("api-doc.json").and(warp::get()).map(|| warp::reply::json(&ApiDoc::openapi()));
 
     let swagger_ui = warp::path("swagger-ui")
         .and(warp::get())
@@ -37,7 +35,5 @@ pub fn routes_with_swagger(
         .and(warp::any().map(move || config.clone()))
         .and_then(serve_swagger);
 
-    api_doc
-        .or(swagger_ui)
-        .or(fingerprint_controllers::build(repo))
+    api_doc.or(swagger_ui).or(fingerprint_controllers::build(repo))
 }

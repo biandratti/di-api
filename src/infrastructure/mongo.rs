@@ -7,9 +7,7 @@ pub struct MongoClient {
 
 impl Clone for MongoClient {
     fn clone(&self) -> Self {
-        Self {
-            client: self.client.clone(),
-        }
+        Self { client: self.client.clone() }
     }
 }
 
