@@ -8,18 +8,11 @@ use warp::Filter;
 use crate::adapters::api::metrics::app_state::AppState;
 
 pub fn build(state: Arc<AppState>) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    metrics(state);
+    warp::get().and(warp::path("metrics")).and(warp::path::end()).and_then(move || metrics_handler(state.clone()))
 }
 
 //TODO: move...
 static HANDLER_ALL: Lazy<[KeyValue; 1]> = Lazy::new(|| [KeyValue::new("handler", "all")]);
-
-fn metrics(state: Arc<AppState>) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    warp::get().and(warp::path("metrics")).map({
-        let state = state.clone();
-        move || metrics_handler(state.clone())
-    })
-}
 
 async fn metrics_handler(state: Arc<AppState>) -> Result<impl warp::Reply, warp::Rejection> {
     let mut buffer = vec![];

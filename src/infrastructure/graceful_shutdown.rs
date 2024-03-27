@@ -6,9 +6,11 @@ use std::sync::Arc;
 
 use tokio_graceful_shutdown::SubsystemHandle;
 use utoipa_swagger_ui::Config;
+use warp::Filter;
 
 use crate::adapters::api::metrics::app_state::AppState;
 use crate::adapters::api::metrics::metrics_controller;
+use crate::adapters::api::shared::routes::routes_with_swagger;
 use crate::{adapters, infrastructure};
 
 pub async fn mongo_graceful_shutdown(subsys: SubsystemHandle, client: infrastructure::mongo::MongoClient) -> miette::Result<()> {
@@ -47,7 +49,7 @@ pub async fn server_graceful_shutdown(subsys: SubsystemHandle, mongo_client: inf
             .init(),
     });
 
-    let routes = adapters::api::shared::routes::routes_with_swagger(repo, config).or(metrics_controller::build(state));
+    let routes = routes_with_swagger(repo, config).or(metrics_controller::build(state));
     let (addr, server) = warp::serve(routes).bind_with_graceful_shutdown(socket_addr, async move {
         subsys.on_shutdown_requested().await;
         tracing::info!("Starting server shutdown ...");
