@@ -23,11 +23,9 @@ impl MongoFingerprintRepository {
         Ok(Self { collection })
     }
 }
+
 impl FingerprintRepositoryAbstract for MongoFingerprintRepository {
-    async fn insert(
-        &self,
-        fingerprint: &mut FingerprintEntity,
-    ) -> Result<(), Box<dyn Error + Send + Sync>> {
+    async fn insert(&self, fingerprint: &mut FingerprintEntity) -> Result<(), Box<dyn Error + Send + Sync>> {
         fingerprint.created = Some(DateTime::now());
         self.collection.insert_one(fingerprint, None).await?;
         Ok(())

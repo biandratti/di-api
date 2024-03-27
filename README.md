@@ -21,28 +21,36 @@ The project follows the principles of clean architecture and incorporates best p
   information.
 - [X] Documentation: Improving code documentation and providing comprehensive API documentation for better usability and
   maintainability.
+- [X] Testing: Implementing unit tests, integration tests, and possibly property-based testing to ensure the reliability
+  and correctness of the service.
 
 ###### Roadmap for Future Development:
 
-- [ ] Testing: Implementing unit tests, integration tests, and possibly property-based testing to ensure the reliability
-  and correctness of the service.
 - [ ] Metrics via Prometheus: Integrating Prometheus for collecting and monitoring service metrics to gain insights into
   performance and resource utilization.
-- [ ] Traceability: Enhancing traceability by implementing distributed tracing to monitor and debug requests as they
-  traverse through the system.
+- [ ] Kafka Integration
 - [ ] Security Enhancements: Adding authentication and authorization mechanisms to secure the API endpoints and data
   access.
+- [ ] Traceability: Enhancing traceability by implementing distributed tracing to monitor and debug requests as they
+  traverse through the system.
 - [ ] Performance Optimization: Identifying and optimizing performance bottlenecks to improve service scalability and
   responsiveness.
 
 ### Usage:
 
-To run the example service, follow these steps:
+To run the example service via cargo, follow these steps:
 
 1. Install Rust and Cargo if you haven't already.
 2. Set up mongo locally:```docker run --name my-mongo-container -d -p 27017:27017 mongo```
 3. Navigate to the project directory and run:```cargo run```.
-4. Access the Documented API at http://127.0.0.1:8080/swagger-ui/.
+4. Access the Documented API at http://0.0.0.0:8080/swagger-ui/.
+
+To run the example service via docker compose, follow these steps:
+
+1. Install Docker Compose if you haven't already.
+2. Build the docker image:```docker compose build```
+3. Run the docker compose:```docker compose up```.
+4. Access the Documented API at http://0.0.0.0:8080/swagger-ui/.
 
 ###### Contributions
 
