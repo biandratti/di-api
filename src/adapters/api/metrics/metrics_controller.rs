@@ -1,11 +1,10 @@
 use std::sync::Arc;
 
+use crate::infrastructure::metrics::AppState;
 use once_cell::sync::Lazy;
 use opentelemetry::KeyValue;
 use prometheus::{Encoder, TextEncoder};
 use warp::Filter;
-
-use crate::adapters::api::metrics::app_state::AppState;
 
 pub fn build(state: Arc<AppState>) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::get().and(warp::path("metrics")).and(warp::path::end()).and_then(move || metrics_handler(state.clone()))
