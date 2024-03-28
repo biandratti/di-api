@@ -1,3 +1,5 @@
+use std::error::Error;
+use warp::reject::custom;
 use warp::reject::Reject;
 use warp::Rejection;
 
@@ -8,13 +10,15 @@ pub struct ErrorResponseHandling {}
 impl ErrorResponseHandling {
     pub fn map_io_error(e: ApiError) -> Rejection {
         match e.get_error_code() {
-            400 => warp::reject::custom(CustomRejection(e.error)),
-            _ => warp::reject::custom(CustomRejection(e.error)),
+            400 => custom(CustomRejection { error: Some(e.error) }),
+            _ => custom(CustomRejection { error: Some(e.error) }),
         }
     }
 }
 
 #[derive(Debug)]
-pub struct CustomRejection(pub Box<dyn std::error::Error + Send + Sync>);
+pub struct CustomRejection {
+    pub error: Option<Box<dyn Error + Send + Sync>>,
+}
 
 impl Reject for CustomRejection {}
