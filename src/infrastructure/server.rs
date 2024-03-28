@@ -19,7 +19,7 @@ use warp::Filter;
 pub struct ServerGracefulShutdown {}
 
 impl ServerGracefulShutdown {
-    pub async fn execute(subsys: SubsystemHandle, mongo_client: MongoClient, socket_addr: SocketAddrV4) -> miette::Result<()> {
+    async fn run_server(subsys: SubsystemHandle, mongo_client: MongoClient, socket_addr: SocketAddrV4) -> miette::Result<()> {
         let config: Arc<Config> = Arc::new(Config::from("/api-doc.json"));
 
         let repo: MongoFingerprintRepository = MongoFingerprintRepository::new(mongo_client.client, &dotenv::var("DATABASE_NAME").expect("DATABASE_NAME must be set"))
@@ -44,24 +44,24 @@ impl ServerGracefulShutdown {
 
         Ok(())
     }
-}
 
-pub async fn run(socket_addr: SocketAddrV4, db_url: &str) {
-    tracing_subscriber::fmt().with_max_level(tracing::Level::INFO).init();
-    let mongo_client: MongoClient = MongoClient::new(db_url).await.unwrap();
+    pub async fn run(socket_addr: SocketAddrV4, db_url: &str) {
+        tracing_subscriber::fmt().with_max_level(tracing::Level::INFO).init();
+        let mongo_client: MongoClient = MongoClient::new(db_url).await.unwrap();
 
-    let client_clone_mongo = mongo_client.clone();
-    // Setup and execute subsystem tree
-    let _ = Toplevel::new(move |s| async move {
-        s.start(SubsystemBuilder::new("Mongo", move |subsys| async move {
-            mongo::MongoGracefulShutdown::execute(subsys, client_clone_mongo).await
-        }));
+        let client_clone_mongo = mongo_client.clone();
+        // Setup and execute subsystem tree
+        let _ = Toplevel::new(move |s| async move {
+            s.start(SubsystemBuilder::new("Mongo", move |subsys| async move {
+                mongo::MongoGracefulShutdown::execute(subsys, client_clone_mongo).await
+            }));
 
-        s.start(SubsystemBuilder::new("Warp Server", move |subsys| async move {
-            ServerGracefulShutdown::execute(subsys, mongo_client, socket_addr).await
-        }));
-    })
-    .catch_signals()
-    .handle_shutdown_requests(Duration::from_secs(2))
-    .await;
+            s.start(SubsystemBuilder::new("Warp Server", move |subsys| async move {
+                ServerGracefulShutdown::run_server(subsys, mongo_client, socket_addr).await
+            }));
+        })
+        .catch_signals()
+        .handle_shutdown_requests(Duration::from_secs(2))
+        .await;
+    }
 }

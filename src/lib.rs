@@ -6,5 +6,5 @@ pub mod domain;
 pub mod infrastructure;
 
 pub async fn run(socket_addr: SocketAddrV4, db_url: &str) {
-    infrastructure::server::run(socket_addr, db_url).await;
+    infrastructure::server::ServerGracefulShutdown::run(socket_addr, db_url).await;
 }
