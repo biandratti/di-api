@@ -15,29 +15,24 @@ impl BasicAuth {
     }
 
     async fn authenticate(&self, authorization: Option<String>) -> Result<(), Rejection> {
-        // Check if Authorization header is present
-        if let Some(auth) = authorization {
-            // Extract username and password from Authorization header
-            if let Some(credentials) = auth.strip_prefix("Basic ") {
-                // Decode base64 encoded credentials
-                if let Ok(decoded) = base64::decode(credentials) {
-                    // Convert decoded bytes to string
-                    if let Ok(decoded_str) = String::from_utf8(decoded) {
-                        // Split username and password
-                        let parts: Vec<&str> = decoded_str.splitn(2, ':').collect();
-                        // Check if username and password match
-                        if let [u, p] = parts[..] {
-                            if u == self.username && p == self.password {
-                                // Authentication successful
-                                return Ok(());
-                            }
-                        }
-                    }
+        let (u, p) = authorization
+            .and_then(|auth| auth.strip_prefix("Basic ").map(|cred| base64::decode(cred).ok()))
+            .flatten()
+            .and_then(|decoded| String::from_utf8(decoded).ok())
+            .and_then(|decoded_str| {
+                let mut parts = decoded_str.splitn(2, ':');
+                match (parts.next().map(|s| s.to_owned()), parts.next().map(|s| s.to_owned())) {
+                    (Some(u), Some(p)) => Some((u, p)),
+                    _ => None,
                 }
-            }
+            })
+            .unwrap_or_else(|| ("".to_owned(), "".to_owned()));
+
+        if u == self.username && p == self.password {
+            Ok(())
+        } else {
+            Err(warp::reject::custom(error_handler::Error::WrongPassword))
         }
-        // Authentication failed
-        Err(warp::reject::custom(error_handler::Error::WrongPassword))
     }
 }
 

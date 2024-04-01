@@ -1,7 +1,8 @@
+use http::header::AUTHORIZATION;
 use serde_json::from_slice;
 use testcontainers::{clients, core::WaitFor, GenericImage};
 use tokio::test;
-use warp::http::{Response, StatusCode};
+use warp::http::{HeaderValue, Response, StatusCode};
 use warp::hyper::body::Bytes;
 use warp::test::request;
 
@@ -22,13 +23,26 @@ async fn it_get_fingerprints() {
     let mongo_client: MongoClient = MongoClient::new(&db_url).await.unwrap();
     let repo: MongoFingerprintRepository = MongoFingerprintRepository::new(mongo_client.client, &db_name).await.unwrap();
 
+    let auth_header_value = format!("Basic {}", base64::encode("username:password"));
+
     let api = fingerprint_controllers::build(repo);
 
-    let post_resp: Response<Bytes> = request().method("POST").path("/fingerprint").json(&fingerprint_payload()).reply(&api).await;
+    let post_resp: Response<Bytes> = request()
+        .method("POST")
+        .path("/fingerprint")
+        .json(&fingerprint_payload())
+        .header(AUTHORIZATION.as_str(), HeaderValue::from_str(&auth_header_value).unwrap())
+        .reply(&api)
+        .await;
 
     assert_eq!(post_resp.status(), StatusCode::CREATED);
 
-    let get_resp: Response<Bytes> = request().method("GET").path("/fingerprint").reply(&api).await;
+    let get_resp: Response<Bytes> = request()
+        .method("GET")
+        .path("/fingerprint")
+        .header(AUTHORIZATION.as_str(), HeaderValue::from_str(&auth_header_value).unwrap())
+        .reply(&api)
+        .await;
 
     let status = get_resp.status();
     let body_bytes = get_resp.into_body().clone();
