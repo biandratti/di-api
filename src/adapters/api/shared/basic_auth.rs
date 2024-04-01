@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use warp::http::header::AUTHORIZATION;
 use warp::reject::custom;
 use warp::Filter;
@@ -48,16 +49,14 @@ impl BasicAuth {
     }
 }
 
-pub fn basic_auth(username: String, password: String) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+pub struct Session {}
+pub fn basic_auth(username: String, password: String) -> impl Filter<Extract = (Session,), Error = warp::Rejection> + Clone {
     warp::header::optional(AUTHORIZATION.as_str()).and_then(move |authorization: Option<String>| {
         let basic_auth = BasicAuth::new(username.clone(), password.clone());
         async move {
             match basic_auth.authenticate(authorization).await {
-                Ok(_) => {
-                    // Authentication successful, return a 200 OK response
-                    let response = warp::reply::reply();
-                    Ok(response)
-                }
+                Ok(_) => Ok(Session {}),
                 Err(_) => Err(custom(CustomRejection { error: None })),
             }
         }
