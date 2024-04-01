@@ -9,6 +9,7 @@ use crate::adapters::api::fingerprint::fingerprint_controllers;
 use crate::adapters::api::fingerprint::fingerprint_payload::FingerprintPayload;
 use crate::adapters::api::fingerprint::fingerprint_presenters::FingerprintPresenter;
 use crate::infrastructure::swagger::serve_swagger;
+use crate::infrastructure::swagger::SecurityAddon;
 
 #[derive(OpenApi)]
 #[openapi(
@@ -18,7 +19,8 @@ schemas(FingerprintPresenter, FingerprintPayload)
 ),
 tags(
 (name = "fingerprint", description = "Fingerprint items management API")
-)
+),
+modifiers(&SecurityAddon)
 )]
 struct ApiDoc;
 
