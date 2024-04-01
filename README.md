@@ -1,7 +1,7 @@
 ## Rust Tokio Service with MongoDB Example
 
 This example demonstrates a simple Rust service built using the Tokio asynchronous runtime. The service provides an API
-connected to a MongoDB database.
+connected to a MongoDB database and kafka.
 
 The project follows the principles of clean architecture and incorporates best practices in Rust development.
 
@@ -25,12 +25,13 @@ The project follows the principles of clean architecture and incorporates best p
   and correctness of the service.
 - [X] Metrics via Prometheus: Integrating Prometheus for collecting and monitoring service metrics to gain insights into
   performance and resource utilization.
+- [X] Security Enhancements: Adding Basic authentication mechanisms to secure the API endpoints and data
+  access.
 
 ###### Roadmap for Future Development:
 
 - [ ] Kafka Integration
-- [ ] Security Enhancements: Adding authentication and authorization mechanisms to secure the API endpoints and data
-  access.
+- [ ] Healthcheck Endpoint
 - [ ] Traceability: Enhancing traceability by implementing distributed tracing to monitor and debug requests as they
   traverse through the system.
 - [ ] Performance Optimization: Identifying and optimizing performance bottlenecks to improve service scalability and

@@ -38,7 +38,7 @@ impl BasicAuth {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Session {}
-pub fn basic_auth() -> impl Filter<Extract = (Session,), Error = warp::Rejection> + Clone {
+pub fn basic_auth() -> impl Filter<Extract = (Session,), Error = Rejection> + Clone {
     let username = dotenv::var("AUTHORIZATION_USER").expect("AUTHORIZATION_USER must be set");
     let password = dotenv::var("AUTHORIZATION_PASSWORD").expect("AUTHORIZATION_PASSWORD must be set");
     warp::header::optional(AUTHORIZATION.as_str()).and_then(move |authorization: Option<String>| {
