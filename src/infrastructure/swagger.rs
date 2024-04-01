@@ -1,4 +1,6 @@
 use std::sync::Arc;
+use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
+use utoipa::Modify;
 
 use utoipa_swagger_ui::Config;
 use warp::{
@@ -23,5 +25,14 @@ pub async fn serve_swagger(full_path: FullPath, tail: Tail, config: Arc<Config<'
             }
         }
         Err(error) => Ok(Box::new(Response::builder().status(StatusCode::INTERNAL_SERVER_ERROR).body(error.to_string()))),
+    }
+}
+
+pub struct SecurityAddon;
+
+impl Modify for SecurityAddon {
+    fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+        let components = openapi.components.as_mut().unwrap();
+        components.add_security_scheme("Authorization", SecurityScheme::Http(HttpBuilder::new().scheme(HttpAuthScheme::Basic).build()))
     }
 }

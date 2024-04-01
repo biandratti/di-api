@@ -20,13 +20,16 @@ path = "/fingerprint",
 request_body = FingerprintPayload,
 responses(
 (status = 201, description = "Create fingerprint", body = [FingerprintPayload])
+),
+security(
+("Authorization" = [])
 )
 )]
 fn fingerprint_post(repo: MongoFingerprintRepository) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::post()
         .and(warp::path("fingerprint"))
         .and(warp::path::end())
-        .and(basic_auth("username".to_string(), "password".to_string()))
+        .and(basic_auth())
         .and(warp::body::json())
         .and_then(move |_session: Session, fingerprint: FingerprintPayload| {
             let use_case = repo.clone(); // Use your repository instance
@@ -47,13 +50,16 @@ security(
 ),
 responses(
 (status = 200, description = "List fingerprint")
+),
+security(
+("Authorization" = [])
 )
 )]
 fn fingerprint_get_all(repo: MongoFingerprintRepository) -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::get()
         .and(warp::path("fingerprint"))
         .and(warp::path::end())
-        .and(basic_auth("username".to_string(), "password".to_string()))
+        .and(basic_auth())
         .and_then(move |_session: Session| {
             let use_case = repo.clone(); // Use your repository instance
             async move {
