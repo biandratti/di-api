@@ -1,14 +1,8 @@
 use serde::{Deserialize, Serialize};
 use warp::http::header::AUTHORIZATION;
-use warp::reject::custom;
-use warp::Filter;
+use warp::{Filter, Rejection};
 
-use crate::adapters::api::shared::error_response::CustomRejection;
-
-#[derive(Debug)]
-struct AuthenticationError {
-    error: String, //TODO: WIP
-}
+use crate::adapters::api::shared::error_handler;
 
 struct BasicAuth {
     username: String,
@@ -20,7 +14,7 @@ impl BasicAuth {
         BasicAuth { username, password }
     }
 
-    async fn authenticate(&self, authorization: Option<String>) -> Result<(), AuthenticationError> {
+    async fn authenticate(&self, authorization: Option<String>) -> Result<(), Rejection> {
         // Check if Authorization header is present
         if let Some(auth) = authorization {
             // Extract username and password from Authorization header
@@ -33,7 +27,7 @@ impl BasicAuth {
                         let parts: Vec<&str> = decoded_str.splitn(2, ':').collect();
                         // Check if username and password match
                         if let [u, p] = parts[..] {
-                            if u == &self.username && p == &self.password {
+                            if u == self.username && p == self.password {
                                 // Authentication successful
                                 return Ok(());
                             }
@@ -43,9 +37,7 @@ impl BasicAuth {
             }
         }
         // Authentication failed
-        Err(AuthenticationError {
-            error: String::from("Invalid Authentication"),
-        })
+        Err(warp::reject::custom(error_handler::Error::WrongPassword))
     }
 }
 
@@ -59,7 +51,7 @@ pub fn basic_auth() -> impl Filter<Extract = (Session,), Error = warp::Rejection
         async move {
             match basic_auth.authenticate(authorization).await {
                 Ok(_) => Ok(Session {}),
-                Err(_) => Err(custom(CustomRejection { error: None })),
+                Err(error) => Err(error),
             }
         }
     })
