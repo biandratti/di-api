@@ -1,8 +1,7 @@
+use crate::adapters::api::shared::error_handler;
 use serde::{Deserialize, Serialize};
 use warp::http::header::AUTHORIZATION;
 use warp::{Filter, Rejection};
-
-use crate::adapters::api::shared::error_handler;
 
 struct BasicAuth {
     username: String,
@@ -16,7 +15,10 @@ impl BasicAuth {
 
     async fn authenticate(&self, authorization: Option<String>) -> Result<(), Rejection> {
         let (u, p) = authorization
-            .and_then(|auth| auth.strip_prefix("Basic ").map(|cred| base64::decode(cred).ok()))
+            .and_then(|auth| {
+                auth.strip_prefix("Basic ")
+                    .map(|cred| base64::Engine::decode(&base64::engine::general_purpose::STANDARD, cred).ok())
+            })
             .flatten()
             .and_then(|decoded| String::from_utf8(decoded).ok())
             .and_then(|decoded_str| {
