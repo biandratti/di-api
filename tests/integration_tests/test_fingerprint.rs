@@ -23,7 +23,7 @@ async fn it_get_fingerprints() {
     let mongo_client: MongoClient = MongoClient::new(&db_url).await.unwrap();
     let repo: MongoFingerprintRepository = MongoFingerprintRepository::new(mongo_client.client, &db_name).await.unwrap();
 
-    let auth_header_value = format!("Basic {}", base64::encode("username:password"));
+    let auth_header_value = format!("Basic {}", base64::Engine::encode(&base64::engine::general_purpose::STANDARD, "username:password"));
 
     let api = fingerprint_controllers::build(repo);
 
