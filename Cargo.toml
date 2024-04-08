@@ -16,7 +16,7 @@ path = "src/lib.rs"
 parking_lot = "0.12.1"
 serde = { version = "1.0", features = ["derive"] }
 tokio = { version = "1.37.0", features = ["full"] }
-warp = "0.3.6"
+warp = "0.3.7"
 http = "1.0.0"
 bson = "2.10.0"
 futures = { version = "0.3.*" }
