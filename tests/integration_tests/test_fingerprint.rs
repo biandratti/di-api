@@ -1,6 +1,7 @@
 use http::header::AUTHORIZATION;
 use serde_json::from_slice;
-use testcontainers::{clients, core::WaitFor, GenericImage};
+use testcontainers::runners::AsyncRunner;
+use testcontainers::{core::WaitFor, GenericImage};
 use tokio::test;
 use warp::http::{HeaderValue, Response, StatusCode};
 use warp::hyper::body::Bytes;
@@ -15,9 +16,8 @@ use fingerprint_api::infrastructure::mongo::MongoClient;
 #[test]
 async fn it_get_fingerprints() {
     let (mongo_image, db_name, exposed_port) = setup_environment().await;
-    let docker = clients::Cli::default();
-    let mongo_db = docker.run(mongo_image);
-    let port = mongo_db.get_host_port_ipv4(exposed_port);
+    let mongo_db = mongo_image.start().await;
+    let port = mongo_db.get_host_port_ipv4(exposed_port).await;
     let db_url = format!("mongodb://root:root@localhost:{}", port);
 
     let mongo_client: MongoClient = MongoClient::new(&db_url).await.unwrap();
