@@ -1,13 +1,14 @@
 use std::error::Error;
 use std::fs::File;
 use std::io::{stderr, stdin, BufRead, BufReader, Write};
-use std::ops::{Deref, DerefMut};
 use std::time::Duration;
 
 use kafka::client::{Compression, KafkaClient, RequiredAcks};
-use kafka::producer::{AsBytes, Producer, Record};
+use kafka::producer::{Producer, Record};
 
-struct Config {
+use crate::domain::kafka_message::Trimmed;
+
+struct KafkaConfig {
     brokers: Vec<String>,
     topic: String,
     input_file: Option<String>,
@@ -17,28 +18,19 @@ struct Config {
     conn_idle_timeout: Duration,
     ack_timeout: Duration,
 }
-struct Trimmed(String);
 
-impl AsBytes for Trimmed {
-    fn as_bytes(&self) -> &[u8] {
-        self.0.trim().as_bytes()
-    }
-}
+pub fn produce() -> Result<(), Box<dyn Error + Send + Sync>> {
+    let cfg = &KafkaConfig {
+        brokers: [dotenv::var("KAFKA_BROKERS").expect("KAFKA_BROKERS must be set")].into(),
+        topic: dotenv::var("KAFKA_TOPIC").expect("KAFKA_TOPIC must be set"),
+        input_file: None,
+        compression: Compression::NONE,
+        required_acks: RequiredAcks::All,
+        batch_size: dotenv::var("KAFKA_BATCH_SIZE").expect("KAFKA_TOPIC must be set").parse().unwrap(),
+        conn_idle_timeout: Duration::from_secs(1),
+        ack_timeout: Duration::from_secs(1),
+    };
 
-impl Deref for Trimmed {
-    type Target = String;
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl DerefMut for Trimmed {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
-}
-
-fn produce(cfg: &Config) -> Result<(), Box<dyn Error + Send + Sync>> {
     let mut client = KafkaClient::new(cfg.brokers.clone());
     client.set_client_id("kafka-rust-console-producer".into());
     client.load_metadata_all()?;
@@ -58,7 +50,7 @@ fn produce(cfg: &Config) -> Result<(), Box<dyn Error + Send + Sync>> {
     }
 }
 
-fn produce_impl(src: &mut dyn BufRead, client: KafkaClient, cfg: &Config) -> Result<(), Box<dyn Error + Send + Sync>> {
+fn produce_impl(src: &mut dyn BufRead, client: KafkaClient, cfg: &KafkaConfig) -> Result<(), Box<dyn Error + Send + Sync>> {
     let mut producer = Producer::from_client(client)
         .with_ack_timeout(cfg.ack_timeout)
         .with_required_acks(cfg.required_acks)
@@ -68,7 +60,7 @@ fn produce_impl(src: &mut dyn BufRead, client: KafkaClient, cfg: &Config) -> Res
     produce_impl_nobatch(&mut producer, src, cfg)
 }
 
-fn produce_impl_nobatch(producer: &mut Producer, src: &mut dyn BufRead, cfg: &Config) -> Result<(), Box<dyn Error + Send + Sync>> {
+fn produce_impl_nobatch(producer: &mut Producer, src: &mut dyn BufRead, cfg: &KafkaConfig) -> Result<(), Box<dyn Error + Send + Sync>> {
     let mut stderr = stderr();
     let mut rec = Record::from_value(&cfg.topic, Trimmed(String::new()));
     loop {
