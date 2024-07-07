@@ -1,3 +1,4 @@
+mod kafka_producer;
 pub mod metrics;
 pub mod mongo;
 pub mod server;
